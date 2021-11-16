@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 @Repository
 public class UserDao {
@@ -53,7 +54,7 @@ public class UserDao {
 
     // 로그인: 해당 email에 해당되는 user의 암호화된 비밀번호 값을 가져온다.
     public User getPwd(PostLoginReq postLoginReq) {
-        String getPwdQuery = "select ID, password,email,`name`,zipcode from User where email = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
+        String getPwdQuery = "select ID, password,email,`name`,zipcode from user where email = ?"; // 해당 email을 만족하는 User의 정보들을 조회한다.
         String getPwdParams = postLoginReq.getEmail(); // 주입될 email값을 클라이언트의 요청에서 주어진 정보를 통해 가져온다.
 
         return this.jdbcTemplate.queryForObject(getPwdQuery,
@@ -86,7 +87,19 @@ public class UserDao {
     }
 
 
+    //유저 리스트 조회 5개씩
+    public List<GetUserRes> getUserResList(int page){
+        String getUserListQuery = "select * from user limit 3 offset ?";
+        int param = page;
+        return this.jdbcTemplate.query(getUserListQuery,(rs, rowNum) ->{
+            GetUserRes t = new GetUserRes();
+            t.setUserIdx(rs.getInt("id"));
+            t.setName(rs.getString("name"));
+            t.setEmail(rs.getString("email"));
+            return t;
+        },page);
 
+    }
 
 
     public int checkEmail(String email) {

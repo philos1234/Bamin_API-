@@ -12,6 +12,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import static com.example.demo.config.BaseResponseStatus.EMPTY_JWT;
@@ -25,7 +26,7 @@ public class JwtService {
     @param userIdx
     @return String
      */
-    public String createJwt(int userIdx){
+    public String createJwt(int userIdx) {
         Date now = new Date();
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
@@ -71,4 +72,20 @@ public class JwtService {
         return claims.getBody().get("userIdx",Integer.class);  // jwt 에서 userIdx를 추출합니다.
     }
 
+
+    /** 토큰의 유효성 검증 **/
+
+    public void checkToken() throws  BaseException{
+
+        String accessToken = getJwt();
+        // 2. JWT parsing
+        Jws<Claims> claims;
+        try{
+            claims = Jwts.parser()
+                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .parseClaimsJws(accessToken);
+        } catch (Exception ignored) {
+            throw new BaseException(INVALID_JWT);
+        }
+    }
 }

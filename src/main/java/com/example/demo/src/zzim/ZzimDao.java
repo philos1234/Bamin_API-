@@ -1,5 +1,6 @@
 package com.example.demo.src.zzim;
 
+import com.example.demo.src.zzim.dto.GetManyZzimStoreRes;
 import com.example.demo.src.zzim.dto.GetZzimStoreIdRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,6 +39,28 @@ public class ZzimDao {
 
         return this.jdbcTemplate.update(createZzimQuery,param);
 
+
+    }
+
+    public void delZzim(int u_idx, int s_idx) {
+
+        String delZzimQuery = "delete from zzim where user_id = ? AND store_id = ? ";
+        Object[] param = new Object[]{u_idx,s_idx};
+
+        this.jdbcTemplate.update(delZzimQuery,param);
+
+
+    }
+
+    public List<GetManyZzimStoreRes> getManyZzimStore() {
+
+        String query = "select store.id ,store.name, A.cnt FROM (select store_id AS s_id, count(store_id) as cnt from zzim  group by store_id) as A  JOIN store ON store.id = A.s_id ORDER BY A.cnt DESC;";
+
+        return this.jdbcTemplate.query(query,(rs, rowNum) -> new GetManyZzimStoreRes(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getInt("cnt")
+                ));
 
     }
 }

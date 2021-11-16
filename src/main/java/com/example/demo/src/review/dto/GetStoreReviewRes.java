@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class GetStoreReviewRes {
+    private int id;
     private String content;
     private int score;
 }

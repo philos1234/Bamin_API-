@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetStoreInfoRes {
 
+    private int idx;
     private String name;
     private int cost;
     private int tip;

@@ -4,8 +4,12 @@ import com.example.demo.config.BaseException;
 import com.example.demo.config.secret.Secret;
 import com.example.demo.src.user.dto.*;
 import com.example.demo.utils.AES128;
+import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import static com.example.demo.config.BaseResponseStatus.*;
 
@@ -14,9 +18,11 @@ public class UserService {
 
 
     private final UserDao userDao;
+    private final JwtService jwtService;
 
     @Autowired
-    public UserService(UserDao userDao){
+    public UserService(UserDao userDao, JwtService jwtService){
+        this.jwtService = jwtService;
         this.userDao = userDao;
     }
 
@@ -47,7 +53,7 @@ public class UserService {
     }
 
     // 로그인(password 검사)
-    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException {
+    public PostLoginRes logIn(PostLoginReq postLoginReq) throws BaseException{
         User user = userDao.getPwd(postLoginReq);
         String password;
         try {
@@ -59,7 +65,9 @@ public class UserService {
 
         if (postLoginReq.getPassword().equals(password)) { //비말번호가 일치한다면 userIdx를 가져온다.
             int userIdx = userDao.getPwd(postLoginReq).getUserIdx();
-            return new PostLoginRes(userIdx);
+            String jwt = jwtService.createJwt(userIdx); //토큰 발급
+            System.out.println("토큰 : " + jwt);
+            return new PostLoginRes(userIdx,jwt);
 
         } else { // 비밀번호가 다르다면 에러메세지를 출력한다.
             throw new BaseException(FAILED_TO_LOGIN);
@@ -143,6 +151,19 @@ public class UserService {
         else return false;
 
     }
+
+
+    public List<GetUserRes> getUserList(int page) throws BaseException {
+
+        try{
+            return userDao.getUserResList(page);
+
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
 
 
 }

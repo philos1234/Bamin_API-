@@ -3,6 +3,7 @@ package com.example.demo.src.order;
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.order.dto.GetOrderListRes;
+import com.example.demo.src.order.dto.PostOrderFoodReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +34,30 @@ public class OrderService {
 
 
 
+    }
+
+    public int createOrder(PostOrderFoodReq postOrderFoodReq,int userIdx) throws BaseException{
+
+        try{
+
+            int orderIdx = orderDao.createOrder(postOrderFoodReq,userIdx);
+            return orderIdx;
+
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+
+    }
+
+    public int deleteOrder(int orderIdx) throws BaseException {
+        try{
+
+            orderDao.deleteOrder(orderIdx);
+            return 1;
+
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
     }
 }

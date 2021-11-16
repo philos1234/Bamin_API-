@@ -40,4 +40,16 @@ public class ReviewService {
             throw new BaseException(DATABASE_ERROR);
         }
     }
+
+    public void delReview(int reviewIdx) throws BaseException{
+        try{
+
+            reviewDao.delReview(reviewIdx);
+
+
+        }catch (Exception exception){
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
 }

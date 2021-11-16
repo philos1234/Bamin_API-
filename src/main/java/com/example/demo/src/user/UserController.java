@@ -7,6 +7,8 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.example.demo.config.BaseResponseStatus.*;
 import static com.example.demo.utils.ValidationRegex.isRegexEmail;
 
@@ -75,6 +77,18 @@ public class UserController {
 
     }
 
+    //유저 리스트 조회
+    @GetMapping("/user")
+    public BaseResponse<List<GetUserRes>> getUserList(@RequestParam(name ="page") int page){
+        try{
+            List<GetUserRes> ret = userService.getUserList(page);
+            return new BaseResponse<>(ret);
+        }catch (BaseException exception){
+            return new BaseResponse<>((exception.getStatus()));
+        }
+
+    }
+
     //유저 정보 수정, 이메일,네임,주소
     @PatchMapping("/user/{userIdx}")
     public BaseResponse<String> modifyUser(@PathVariable("userIdx")int userIdx, @RequestBody User user){
@@ -90,7 +104,6 @@ public class UserController {
                 if(patchUserReq.getZipcode() != null){
                     userService.modifyZipcode(patchUserReq);
                 }
-
                 return new BaseResponse<>("회원정보 수정 완료!!");
 
 

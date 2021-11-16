@@ -27,6 +27,7 @@ public class ReviewDao {
 
         return this.jdbcTemplate.query(getReviewListQuery,
                 (rs, rowNum) -> new GetStoreReviewRes(
+                        rs.getInt("id"),
                         rs.getString("content"),
                         rs.getInt("score")
                 ), queryParam);
@@ -38,6 +39,13 @@ public class ReviewDao {
         String createReviewQuery = "insert into review(user_id,store_id,content,score) values(?,?,?,?)";
         Object[] createReviewParam = new Object[]{u_id,postReviewReq.getStore_id(),postReviewReq.getContent(),postReviewReq.getScore()};
         return this.jdbcTemplate.update(createReviewQuery,createReviewParam);
+
+    }
+
+    public void delReview(int reviewIdx) {
+        String delReviewQuery = "DELETE FROM review WHERE id =?";
+
+        this.jdbcTemplate.update(delReviewQuery, reviewIdx);
 
     }
 }

@@ -2,15 +2,15 @@ package com.example.demo.src.zzim;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponse;
+import com.example.demo.config.BaseResponseStatus;
 import com.example.demo.src.store.StoreService;
 import com.example.demo.src.store.dto.GetStoreInfoRes;
-import com.example.demo.src.zzim.dto.GetZzimReq;
+import com.example.demo.src.zzim.dto.GetManyZzimStoreRes;
 import com.example.demo.src.zzim.dto.GetZzimStoreIdRes;
+import com.example.demo.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,10 @@ public class ZzimController {
 
     private ZzimService zzimService;
     private StoreService storeService;
+    private JwtService jwtService;
     @Autowired
-    public ZzimController(ZzimService zzimService, StoreService storeService){
+    public ZzimController(ZzimService zzimService, StoreService storeService, JwtService jwtService){
+        this.jwtService = jwtService;
         this.zzimService = zzimService;
         this.storeService = storeService;
     }
@@ -60,4 +62,29 @@ public class ZzimController {
     }
 
 
+    @PatchMapping("/{userIdx}/{storeId}")
+    public BaseResponse<String> delZzim(@PathVariable(name="userIdx") int u_idx, @PathVariable(name="storeId") int s_idx){
+
+        try{
+
+            if(u_idx != jwtService.getUserIdx())throw new BaseException(BaseResponseStatus.INVALID_JWT); //토큰 유효성확인
+            zzimService.delZzim(u_idx,s_idx);
+            return new BaseResponse<>("찜 삭제 완료!");
+
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    @GetMapping("/best")
+    public BaseResponse<List<GetManyZzimStoreRes>> GetmanyZzimStore(){
+
+        try{
+           List<GetManyZzimStoreRes> getManyZzimStoreRes = zzimService.getManyZzimStore();
+           return new BaseResponse<>(getManyZzimStoreRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }

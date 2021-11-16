@@ -2,6 +2,7 @@ package com.example.demo.src.zzim;
 
 import com.example.demo.config.BaseException;
 import com.example.demo.config.BaseResponseStatus;
+import com.example.demo.src.zzim.dto.GetManyZzimStoreRes;
 import com.example.demo.src.zzim.dto.GetZzimStoreIdRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,5 +41,23 @@ public class ZzimService {
             throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
         }
 
+    }
+
+    public void delZzim(int u_idx, int s_idx) throws BaseException {
+        try{
+
+            zzimDao.delZzim(u_idx,s_idx);
+        }catch (Exception exception){
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
+    }
+
+    public List<GetManyZzimStoreRes> getManyZzimStore() throws BaseException{
+
+        try{
+           return  zzimDao.getManyZzimStore();
+        }catch (Exception exception){
+            throw new BaseException(BaseResponseStatus.DATABASE_ERROR);
+        }
     }
 }
